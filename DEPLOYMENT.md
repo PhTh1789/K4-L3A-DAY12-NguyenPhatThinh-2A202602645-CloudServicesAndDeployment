@@ -8,32 +8,32 @@
 
 ## Thông Tin Học Viên
 
-| Mục | Nội dung |
-|-----|----------|
-| Họ và tên | (điền họ tên) |
-| Mã học viên | (điền mã học viên) |
-| Repo | (điền link repo K4-L3A-DAY12-HoVaTen-MSSV-CloudServicesAndDeployment) |
+| Mục         | Nội dung                                                                                        |
+| ----------- | ----------------------------------------------------------------------------------------------- |
+| Họ và tên   | Nguyễn Phát Thịnh                                                                               |
+| Mã học viên | 2A202602645                                                                                     |
+| Repo        | https://github.com/PhTh1789/K4-L3A-DAY12-NguyenPhatThinh-2A202602645-CloudServicesAndDeployment |
 
 ## Service
 
-| Mục | Nội dung |
-|-----|----------|
-| Public URL | https://TODO-thay-bang-url-that.up.railway.app |
-| Platform | Railway / Render / Cloud Run — (điền platform bạn dùng) |
-| Ngày deploy | (điền ngày) |
+| Mục         | Nội dung                                          |
+| ----------- | ------------------------------------------------- |
+| Public URL  | https://day12-agent-production-npt.up.railway.app |
+| Platform    | Railway                                           |
+| Ngày deploy | 28/09/2026                                        |
 
 ## Biến Môi Trường Đã Set Trên Cloud
 
 Ghi tên biến và **nguồn giá trị**, không ghi giá trị:
 
-| Biến | Đã set | Ghi chú |
-|------|--------|---------|
-| `PORT` | ✅ | platform tự gán |
-| `AGENT_API_KEY` | ✅ | đặt trong dashboard, không nằm trong repo |
-| `REDIS_URL` | ✅ | (điền: Redis add-on của platform / Upstash / ...) |
-| `RATE_LIMIT_PER_MINUTE` | ✅ | 10 |
-| `MONTHLY_BUDGET_USD` | ✅ | 10.0 |
-| `LOG_LEVEL` | ✅ | INFO |
+| Biến                    | Đã set | Ghi chú                                   |
+| ----------------------- | ------ | ----------------------------------------- |
+| `PORT`                  | ✅     | platform tự gán                           |
+| `AGENT_API_KEY`         | ✅     | đặt trong dashboard, không nằm trong repo |
+| `REDIS_URL`             | ✅     | Redis add-on của Railway                  |
+| `RATE_LIMIT_PER_MINUTE` | ✅     | 10                                        |
+| `MONTHLY_BUDGET_USD`    | ✅     | 10.0                                      |
+| `LOG_LEVEL`             | ✅     | INFO                                      |
 
 ## Lệnh Kiểm Tra
 
@@ -72,30 +72,34 @@ done; echo
 
 Dán output của các lệnh trên vào đây:
 
-```
-(điền output)
+```text
+# 1. Liveness — mong đợi 200 {"status":"ok"}
+HTTP/1.1 200 OK
+content-type: application/json
+{"status":"ok","service":"day12-agent","version":"1.0.0"}
+
+# 2. Readiness — mong đợi 200 {"status":"ready"} (đã nối được Redis)
+HTTP/1.1 200 OK
+content-type: application/json
+{"status":"ready","redis":true}
+
+# 3. Không có API key — mong đợi 401
+HTTP/1.1 401 Unauthorized
+content-type: application/json
+{"detail":"invalid or missing API key"}
+
+# 4. Có API key — mong đợi 200 kèm câu trả lời
+HTTP/1.1 200 OK
+content-type: application/json
+{"answer":"Ngắn gọn: Deploy là gì phụ thuộc vào ba yếu tố — cấu hình qua biến môi trường, health check để orchestrator biết trạng thái, và giới hạn tài nguyên.","user_id":"sv-test","history_length":0,"cost_usd":0.000035,"tokens":{"in":5,"out":45}}
+
+# 5. Rate limit — gọi 15 lần, những lần cuối phải trả 429
+200 200 200 200 200 200 200 200 200 200 429 429 429 429 429
 ```
 
 ## Ảnh Chụp Màn Hình
 
 Đặt ảnh trong thư mục `screenshots/`:
 
-- `screenshots/dashboard.png` — trang quản lý service trên platform
-- `screenshots/health.png` — kết quả gọi `/health` từ trình duyệt hoặc curl
-
----
-
-## Nếu Dùng Phương Án Dự Phòng
-
-Không đăng ký được tài khoản cloud? Vẫn nộp được bài, nhưng CP5 tối đa 60% điểm:
-
-1. Đặt `LOCAL_FALLBACK=true` trong `.env`
-2. Chạy `docker compose up -d` rồi kiểm tra `docker compose ps`
-3. Chụp màn hình vào `screenshots/`
-4. Chạy `pytest tests/test_cp5.py -v` — bộ test sẽ tự chuyển sang kiểm tra
-   `http://localhost:8000`
-5. Ghi rõ lý do không deploy được vào phần dưới đây:
-
-```
-(điền lý do nếu dùng phương án dự phòng, ngược lại xóa mục này)
-```
+- `screenshots\dashboard_railway.png` — trang quản lý service trên platform
+- `screenshots\health.png` — kết quả gọi `/health` từ trình duyệt hoặc curl -`screenshots\ready_redis.png` — kết quả gọi `/ready` từ trình duyệt hoặc curl
