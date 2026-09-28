@@ -4,3 +4,15 @@
 
 .git
 .gitignore
+.env
+.env.*
+.venv
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache
+tests
+screenshots
+htmlcov
+.coverage
